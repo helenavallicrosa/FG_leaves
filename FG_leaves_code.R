@@ -42,7 +42,8 @@ pred <- ggplot(data=df_plot, aes(x=x, y=predicted)) +
         axis.text.y = element_text(size=16),
         axis.title.x = element_text(size = 16),
         axis.title.y = element_text(size = 16),
-        title = element_text(size = 18))+
+        title = element_text(size = 18),
+       plot.margin = margin(0,0,0,1, "cm"))+
   labs( x="Treatment", y="Yearly relative growth (cm/cm/yr)")+
   theme(legend.title = element_blank())+
   scale_fill_manual("legend", values = c("Summary" = "#db415a", "Non-N-fix" = "darkolivegreen4", "N-fix" = "#f8ae6c"))
@@ -69,7 +70,8 @@ est <- ggplot(data=sum_growth, aes(x=term, y=estimate, label=sum_growth$p.label)
         axis.text.y = element_text(size=16),
         axis.title.x = element_text(size = 16),
         axis.title.y = element_text(size = 16),
-        title = element_text(size = 18))+
+        title = element_text(size = 18),
+       plot.margin = margin(0,1,0,0, "cm"))+
   geom_text(vjust=-1.5)+
   labs(x="", y="Estimates")
 est
@@ -77,10 +79,10 @@ est
 #Figure 2
 library(ggpubr)
 tiff(filename="~/Desktop/Guaiana Papers/Treball/v4/Figures/Fig. 2.tif",
-     width=1400, height = 800, res= 150)
+     width=1500, height = 900, res= 150)
 a <- ggarrange(est, pred, ncol = 2, nrow = 1, heights= c(0.8,0.8), labels= c("A)", "B)"), align="h") +
-  theme(plot.margin = margin(1.2,0,0,0, "cm"))
-annotate_figure(a, fig.lab  = "Stem growth", fig.lab.size = 20, fig.lab.face = "bold")
+  theme(plot.margin = margin(2,0.5,0.5,0.5, "cm"))
+annotate_figure(a, top = text_grob("Stem growth", vjust=2, hjust=2.8, face="bold", size=20))
 dev.off()
 
 #### Leaf N, P, N:P. Figures 3,4,5 ####
@@ -192,7 +194,8 @@ pred_N <- ggplot(data=df_plot_N, aes(x=x, y=predicted)) +
         axis.text.y = element_text(size=16),
         axis.title.x = element_text(size = 16),
         axis.title.y = element_text(size = 16),
-        title = element_text(size = 18))+
+        title = element_text(size = 18),
+        plot.margin = margin(0,0,0,1, "cm"))+
   labs( x="Treatment", y="Foliar N %")+
   theme(legend.title = element_blank())+
   scale_fill_manual("legend", values = c("Summary" = "#db415a", "Non-N-fix" = "darkolivegreen4", "N-fix" = "#f8ae6c"))
@@ -215,7 +218,8 @@ pred_NP <- ggplot(data=df_plot_NP, aes(x=x, y=predicted)) +
         axis.text.y = element_text(size=16),
         axis.title.x = element_text(size = 16),
         axis.title.y = element_text(size = 16),
-        title = element_text(size = 18))+
+        title = element_text(size = 18),
+        plot.margin = margin(0,0,0,1, "cm"))+
   labs( x="Treatment", y="Foliar N:P")+
   theme(legend.title = element_blank())+
   scale_fill_manual("legend", values = c("Summary" = "#db415a", "Non-N-fix" = "darkolivegreen4", "N-fix" = "#f8ae6c"))
@@ -238,7 +242,8 @@ pred_P <- ggplot(data=df_plot_P, aes(x=x, y=predicted)) +
         axis.text.y = element_text(size=16),
         axis.title.x = element_text(size = 16),
         axis.title.y = element_text(size = 16),
-        title = element_text(size = 18))+
+        title = element_text(size = 18),
+        plot.margin = margin(0,0,0,1, "cm"))+
   labs( x="Treatment", y="Foliar P %")+
   theme(legend.title = element_blank())+
   scale_fill_manual("legend", values = c("Summary" = "#db415a", "Non-N-fix" = "darkolivegreen4", "N-fix" = "#f8ae6c"))
@@ -250,73 +255,76 @@ pred_P
 # dev.off()
 
 # estimates
-sum_est_leaf <- get_model_data(models_leaf_lme[[1]], type="est")
-sum_est_leaf$fill <- ifelse(sum_est_leaf$p.value < 0.05, "#db415a", "gray70")
-sum_est_leaf$term <- c("N fert", "NP fert", "P fert", "N-fixers","N-fix:N fert", "N-fix:NP fert", "N-fix:P fert")
-sum_est_leaf$term <- factor(sum_est_leaf$term, levels=sum_est_leaf$term)
+sum_est_leaf_N <- get_model_data(models_leaf_lme[[1]], type="est")
+sum_est_leaf_N$fill <- ifelse(sum_est_leaf_N$p.value < 0.05, "#db415a", "gray70")
+sum_est_leaf_N$term <- c("N fert", "NP fert", "P fert", "N-fixers","N-fix:N fert", "N-fix:NP fert", "N-fix:P fert")
+sum_est_leaf_N$term <- factor(sum_est_leaf_N$term, levels=sum_est_leaf_N$term)
 
 library(ggplot2)
-est_N <- ggplot(data=sum_est_leaf, aes(x=term, y=estimate, label=sum_est_leaf$p.label)) +
-  geom_point(stat="identity", size=4, col=sum_est_leaf$fill)+
+est_N <- ggplot(data=sum_est_leaf_N, aes(x=term, y=estimate, label=sum_est_leaf_N$p.label)) +
+  geom_point(stat="identity", size=4, col=sum_est_leaf_N$fill)+
   # geom_text(aes(label = Percentage), vjust = c(0,-1,0,-1,0,-1,0,1.3,0,1.3,0,-1), size = 3,
   # position = position_dodge(0)) +
-  geom_errorbar(aes(ymin=conf.low, ymax=conf.high), width=.2, col=sum_est_leaf$fill)+
+  geom_errorbar(aes(ymin=conf.low, ymax=conf.high), width=.2, col=sum_est_leaf_N$fill)+
   geom_hline(yintercept=0, linetype="dashed")+
   theme_classic()+
   coord_flip()+
   scale_y_continuous(limits=c(-0.5,0.5),oob = rescale_none)+
-  scale_x_discrete(limits = rev(levels(sum_est_leaf$term)))+
+  scale_x_discrete(limits = rev(levels(sum_est_leaf_N$term)))+
   theme(axis.text.x = element_text(size=16),
         axis.text.y = element_text(size=16),
         axis.title.x = element_text(size = 16),
         axis.title.y = element_text(size = 16),
-        title = element_text(size = 18))+
+        title = element_text(size = 18),
+        plot.margin = margin(0,1,0,0, "cm"))+
   geom_text(vjust=-1.5)+
   labs(x="", y="Estimates")
 est_N
 
 #NP
-sum_est_leaf <- get_model_data(models_leaf_lme[[2]], type="est")
-sum_est_leaf$fill <- ifelse(sum_est_leaf$p.value < 0.05, "#db415a", "gray70")
-sum_est_leaf$term <- c("N fert", "NP fert", "P fert", "N-fixers","N-fix:N fert", "N-fix:NP fert", "N-fix:P fert")
-sum_est_leaf$term <- factor(sum_est_leaf$term, levels=sum_est_leaf$term)
+sum_est_leaf_NP <- get_model_data(models_leaf_lme[[2]], type="est")
+sum_est_leaf_NP$fill <- ifelse(sum_est_leaf_NP$p.value < 0.05, "#db415a", "gray70")
+sum_est_leaf_NP$term <- c("N fert", "NP fert", "P fert", "N-fixers","N-fix:N fert", "N-fix:NP fert", "N-fix:P fert")
+sum_est_leaf_NP$term <- factor(sum_est_leaf_NP$term, levels=sum_est_leaf_NP$term)
 
 library(ggplot2)
-est_NP <- ggplot(data=sum_est_leaf, aes(x=term, y=estimate, label=sum_est_leaf$p.label)) +
-  geom_point(stat="identity", size=4, col=sum_est_leaf$fill)+
+est_NP <- ggplot(data=sum_est_leaf_NP, aes(x=term, y=estimate, label=sum_est_leaf_NP$p.label)) +
+  geom_point(stat="identity", size=4, col=sum_est_leaf_NP$fill)+
   # geom_text(aes(label = Percentage), vjust = c(0,-1,0,-1,0,-1,0,1.3,0,1.3,0,-1), size = 3,
   # position = position_dodge(0)) +
-  geom_errorbar(aes(ymin=conf.low, ymax=conf.high), width=.2, col=sum_est_leaf$fill)+
+  geom_errorbar(aes(ymin=conf.low, ymax=conf.high), width=.2, col=sum_est_leaf_NP$fill)+
   geom_hline(yintercept=0, linetype="dashed")+
   theme_classic()+
   coord_flip()+
   scale_y_continuous(limits=c(-0.5,0.5),oob = rescale_none)+
-  scale_x_discrete(limits = rev(levels(sum_est_leaf$term)))+
+  scale_x_discrete(limits = rev(levels(sum_est_leaf_NP$term)))+
   theme(axis.text.x = element_text(size=16),
         axis.text.y = element_text(size=16),
         axis.title.x = element_text(size = 16),
         axis.title.y = element_text(size = 16),
-        title = element_text(size = 18))+
+        title = element_text(size = 18),
+        plot.margin = margin(0,1,0,0, "cm"))+
   geom_text(vjust=-1.5)+
   labs(x="", y="Estimates")
 est_NP
 
-sum_est_leaf <- get_model_data(models_leaf_lme[[3]], type="est")
-sum_est_leaf$fill <- ifelse(sum_est_leaf$p.value < 0.05, "#db415a", "gray70")
-sum_est_leaf$term <- c("N fert", "NP fert", "P fert", "N-fixers","N-fix:N fert", "N-fix:NP fert", "N-fix:P fert")
-sum_est_leaf$term <- factor(sum_est_leaf$term, levels=sum_est_leaf$term)
+# P
+sum_est_leaf_P <- get_model_data(models_leaf_lme[[3]], type="est")
+sum_est_leaf_P$fill <- ifelse(sum_est_leaf_P$p.value < 0.05, "#db415a", "gray70")
+sum_est_leaf_P$term <- c("N fert", "NP fert", "P fert", "N-fixers","N-fix:N fert", "N-fix:NP fert", "N-fix:P fert")
+sum_est_leaf_P$term <- factor(sum_est_leaf_P$term, levels=sum_est_leaf_P$term)
 
 library(ggplot2)
-est_P <- ggplot(data=sum_est_leaf, aes(x=term, y=estimate, label=sum_est_leaf$p.label)) +
-  geom_point(stat="identity", size=4, col=sum_est_leaf$fill)+
+est_P <- ggplot(data=sum_est_leaf_P, aes(x=term, y=estimate, label=sum_est_leaf_P$p.label)) +
+  geom_point(stat="identity", size=4, col=sum_est_leaf_P$fill)+
   # geom_text(aes(label = Percentage), vjust = c(0,-1,0,-1,0,-1,0,1.3,0,1.3,0,-1), size = 3,
   # position = position_dodge(0)) +
-  geom_errorbar(aes(ymin=conf.low, ymax=conf.high), width=.2, col=sum_est_leaf$fill)+
+  geom_errorbar(aes(ymin=conf.low, ymax=conf.high), width=.2, col=sum_est_leaf_P$fill)+
   geom_hline(yintercept=0, linetype="dashed")+
   theme_classic()+
   coord_flip()+
   scale_y_continuous(limits=c(-0.5,0.5),oob = rescale_none)+
-  scale_x_discrete(limits = rev(levels(sum_est_leaf$term)))+
+  scale_x_discrete(limits = rev(levels(sum_est_leaf_P$term)))+
   theme(axis.text.x = element_text(size=16),
         axis.text.y = element_text(size=16),
         axis.title.x = element_text(size = 16),
@@ -329,22 +337,22 @@ est_P
 #all
 library(ggpubr)
 tiff(filename="~/Desktop/Guaiana Papers/Treball/v4/Figures/Fig. 3.tif",
-     width=1400, height = 800, res= 150)
+     width=1500, height = 900, res= 150)
 a <- ggarrange(est_N, pred_N, ncol = 2, nrow = 1, heights= c(0.8,0.8), labels= c("A)", "B)"),
-               align="h") + theme(plot.margin = margin(1.2,0,0,0, "cm"))
-annotate_figure(a, fig.lab  = "Foliar nitrogen", fig.lab.size = 20, fig.lab.face = "bold")
+               align="h") + theme(plot.margin = margin(2,0.5,0.5,0.5, "cm"))
+annotate_figure(a, top = text_grob("Foliar nitrogen", vjust=2, hjust=2.3, face="bold", size=20))
 dev.off()
 
 tiff(filename="~/Desktop/Guaiana Papers/Treball/v4/Figures/Fig. 4.tif",
-     width=1400, height = 800, res= 150)
+     width=1500, height = 900, res= 150)
 a <- ggarrange(est_P, pred_P, ncol = 2, nrow = 1, heights= c(0.8,0.8), labels= c("A)", "B)"),
-               align="h") + theme(plot.margin = margin(1.2,0,0,0, "cm"))
-annotate_figure(a, fig.lab  = "Foliar phosphorus", fig.lab.size = 20, fig.lab.face = "bold")
+               align="h") + theme(plot.margin = margin(2,0.5,0.5,0.5, "cm"))
+annotate_figure(a, top = text_grob("Foliar phosphorus", vjust=2, hjust=1.8, face="bold", size=20))
 dev.off()
 
 tiff(filename="~/Desktop/Guaiana Papers/Treball/v4/Figures/Fig. 5.tif",
-     width=1400, height = 800, res= 150)
+     width=1500, height = 900, res= 150)
 a <- ggarrange(est_NP, pred_NP, ncol = 2, nrow = 1, heights= c(0.8,0.8), labels= c("A)", "B)"),
-               align="h") + theme(plot.margin = margin(1.2,0,0,0, "cm"))
-annotate_figure(a, fig.lab  = "Foliar N:P ratio", fig.lab.size = 20, fig.lab.face = "bold")
+               align="h") + theme(plot.margin = margin(2,0.5,0.5,0.5, "cm"))
+annotate_figure(a, top = text_grob("Foliar N:P ratio", vjust=2, hjust=2.1, face="bold", size=20))
 dev.off()
